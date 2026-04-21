@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PocketLang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>PocketLang</h1>
+    <p class="sub">Run <code>.pcalc</code> in the browser (local server).</p>
+  </header>
+
+  <main>
+    <label for="src">Program</label>
+    <textarea id="src" spellcheck="false">print 40 + 2</textarea>
+
+    <div class="row">
+      <label><input type="checkbox" id="no_opt"> No optimization (<code>--no-opt</code>)</label>
+      <label><input type="checkbox" id="dbg"> Full compiler trace (<code>--debug</code>)</label>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="run">Run</button>
+      <button type="button" id="load_hello" class="secondary">Load hello example</button>
+    </div>
+
+    <h2 class="section-title">Output</h2>
+    <pre id="out" class="panel" aria-live="polite" aria-atomic="true"></pre>
+
+    <h2 class="section-title">Errors / debug (stderr)</h2>
+    <pre id="err" class="panel err-empty" aria-live="polite" aria-atomic="true"></pre>
+  </main>
+
+  <footer>
+    <p>Server runs <code>pocketlang.py</code> in a subprocess. Do not expose to the open internet without hardening.</p>
+  </footer>
+
+  <script>
+    const src = document.getElementById('src');
+    const out = document.getElementById('out');
+    const err = document.getElementById('err');
+    const runBtn = document.getElementById('run');
+
+    function setErrState(kind) {
+      err.className = 'panel ' + (kind === 'empty' ? 'err-empty' : kind === 'debug' ? 'err-debug' : 'err-fail');
+    }
+
+    async function run() {
+      runBtn.disabled = true;
+      runBtn.setAttribute('aria-busy', 'true');
+      out.textContent = 'Running…';
+      err.textContent = '';
+      setErrState('empty');
+      const body = {
+        source: src.value,
+        no_opt: document.getElementById('no_opt').checked,
+        debug: document.getElementById('dbg').checked ? true : null,
+      };
+      try {
+        const res = await fetch('/api/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          out.textContent = '';
+          err.textContent = data.error || 'Request failed';
+          setErrState('fail');
+          return;
+        }
+        out.textContent = data.stdout ?? '';
+        let e = data.stderr ?? '';
+        if (data.exit_code !== 0) e = '(exit ' + data.exit_code + ')\n' + e;
+        err.textContent = e;
+        if (data.exit_code !== 0) setErrState('fail');
+        else if (e.trim()) setErrState('debug');
+        else setErrState('empty');
+      } catch (e) {
+        out.textContent = '';
+        err.textContent = String(e);
+        setErrState('fail');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.removeAttribute('aria-busy');
+      }
+    }
+
+    runBtn.addEventListener('click', run);
+    document.getElementById('load_hello').addEventListener('click', () => {
+      src.value = 'print 42\n';
+    });
+  </script>
+</body>
+</html>

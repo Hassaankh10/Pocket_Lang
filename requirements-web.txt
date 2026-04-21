@@ -1,0 +1,2 @@
+# Optional: web UI (see README — pip install -r requirements-web.txt)
+flask>=3.0

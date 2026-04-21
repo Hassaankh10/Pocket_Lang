@@ -1,0 +1,2 @@
+# PocketLang — CS4031 compiler project (Python 3.11+)
+pytest>=8.0

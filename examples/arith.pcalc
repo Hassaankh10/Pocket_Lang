@@ -1,0 +1,5 @@
+let x = 2 + 3 * 4
+print x
+print (1 + 2) * 3
+print 10 % 3
+print 1.5 + 2

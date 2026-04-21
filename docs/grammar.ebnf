@@ -1,0 +1,24 @@
+(* PocketLang grammar — EBNF, aligned with CS4031 proposal *)
+
+program      = { statement } ;
+
+statement    = let_stmt | if_stmt | while_stmt | func_decl
+             | return_stmt | print_stmt | expr_stmt | block ;
+
+let_stmt     = "let" IDENT "=" expression ;
+if_stmt      = "if" expression block [ "else" block ] ;
+while_stmt   = "while" expression block ;
+func_decl    = "func" IDENT "(" [ IDENT { "," IDENT } ] ")" block ;
+return_stmt  = "return" [ expression ] ;
+print_stmt   = "print" expression ;
+block        = "{" { statement } "}" ;
+expr_stmt    = expression ;
+
+expression   = equality ;
+equality     = comparison { ("=="|"!=") comparison } ;
+comparison   = term       { ("<"|">"|"<="|">=") term } ;
+term         = factor     { ("+"|"-") factor } ;
+factor       = unary      { ("*"|"/"|"%") unary } ;
+unary        = [ "-" ] primary ;
+primary      = INT_LIT | FLOAT_LIT | IDENT | call | "(" expression ")" ;
+call         = IDENT "(" [ expression { "," expression } ] ")" ;

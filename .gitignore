@@ -1,0 +1,121 @@
+# Bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyo
+*.pyd
+
+# Test / type / lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cursorrules
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+.envrc
+.pdm-env/
+.pdm-build/
+
+# Packaging
+*.egg-info/
+.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Secrets & local env
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+*.envrc
+secrets/
+.secret
+.secret.*
+.mcp.json
+.opencode.json
+.windsurfrules
+
+# OS junk
+.DS_Store
+.DS_Store?
+Thumbs.db
+Desktop.ini
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Icon?
+.cache/
+.fseventsd/
+
+# Editors (uncomment if you keep personal IDE settings only locally)
+# .vscode/
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*~
+
+
+# Local tooling / generated artifacts (do not commit)
+.claude/worktrees/
+.code-review-graph/
+.cursor/
+.eg/
+.next/
+.out/
+.yarn/
+.pnpm-debug.log
+npm-debug.log
+AGENTS.md
+CLAUDE.md
+ANTHROPIC.md
+OPENAI.md
+GOOGLE.md
+AZURE.md
+AWS.md
+ORACLE.md
+IBM.md
+ALIBABA.md
+GEMINI.md
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~
+
+# Misc
+*.log
+*.tmp
+tmp/
+temp/
+logs/
+# Platform Agents artifacts
+.claude/
+.anthropic/
+.openai/
+.google/
+.azure/
+.aws/
+.oracle/
+.ibm/
+.alibaba/
+.tencent/
+.huawei/
+.baidu/

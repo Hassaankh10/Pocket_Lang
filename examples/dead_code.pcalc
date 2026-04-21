@@ -1,0 +1,3 @@
+let unused = 100
+let y = 2 + 3
+print y
