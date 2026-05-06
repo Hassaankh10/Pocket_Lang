@@ -55,7 +55,11 @@ The page exposes checkboxes for `--no-opt` and full compiler trace, separates st
 
 ## Who did what
 
-(Add a short honest split — percentages or bullets.)
+Work was divided by compiler phase, with all members contributing to testing and documentation.
+
+- **M. Hassaan (23K-0603)** — Language design and specification (grammar, EBNF, proposal doc); Lexer (`src/lexer/`); IR generation (`src/ir/`); overall CLI integration (`pocketlang.py`, `src/cli/`); end-to-end tests and examples. (~40%)
+- **Ebrahim Bin Moin (23K-0540)** — Parser (`src/parser/`); Semantic analyser and symbol table (`src/semantic/`); `PocketError` diagnostics (`src/errors/`); parser and semantic unit tests. (~35%)
+- **Usaid Shaikh (23K-0704)** — Optimizer passes — constant folding, constant propagation, DCE (`src/optimizer/`); VM / interpreter (`src/interpreter/`); Web interface (`web/`); optimizer and VM unit tests. (~25%)
 
 ## References
 

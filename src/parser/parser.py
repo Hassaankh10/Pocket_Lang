@@ -31,6 +31,19 @@ from .ast_nodes import (
 
 __all__ = ["Parser", "PocketError"]
 
+# Token types that mark the beginning of a new statement — used for
+# panic-mode error recovery to re-synchronise after a parse error.
+_SYNC_TOKENS = {
+    TokenType.LET,
+    TokenType.IF,
+    TokenType.WHILE,
+    TokenType.FUNC,
+    TokenType.RETURN,
+    TokenType.PRINT,
+    TokenType.RBRACE,
+    TokenType.EOF,
+}
+
 _EQUALITY_OPS = {TokenType.EQ: "==", TokenType.NEQ: "!="}
 _COMPARE_OPS = {
     TokenType.LT: "<",
@@ -80,11 +93,37 @@ class Parser:
             tok.col,
         )
 
+    def _synchronize(self) -> None:
+        """Panic-mode recovery: advance until a likely statement boundary.
+
+        Called after catching a ``PocketError`` inside the top-level loop so
+        that parsing can continue and report additional errors rather than
+        stopping at the first one.
+        """
+        while not self._at_end():
+            if self._peek().type in _SYNC_TOKENS:
+                return
+            self.pos += 1
+
     def parse(self) -> Program:
         start = self._peek()
-        stmts = []
+        stmts: List = []
+        errors: List[PocketError] = []
         while not self._at_end():
-            stmts.append(self.parse_statement())
+            try:
+                stmts.append(self.parse_statement())
+            except PocketError as err:
+                errors.append(err)
+                self._synchronize()
+        # If there were errors, re-raise the first one (the compiler pipeline
+        # expects a single PocketError; callers see all errors via stderr when
+        # the CLI loops over them).  For now we re-raise the first, but we
+        # store all of them on the exception for tooling that wants the full
+        # list.
+        if errors:
+            first = errors[0]
+            first.all_errors = errors  # type: ignore[attr-defined]
+            raise first
         return Program(stmts=stmts, line=start.line, col=start.col)
 
     def parse_statement(self):
